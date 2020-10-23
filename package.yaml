@@ -1,0 +1,48 @@
+name:                x-vs-o
+version:             0.1.0.0
+github:              "miamirov/x-vs-o"
+license:             BSD3
+author:              "Ildar Amirov"
+maintainer:          "mikkiamirov17@gmail.com"
+copyright:           "2020 Ildar Amirov"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            App category here
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/miamirov/x-vs-o#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+executables:
+  x-vs-o-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - x-vs-o
+
+tests:
+  x-vs-o-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - x-vs-o
