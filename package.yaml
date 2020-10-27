@@ -27,15 +27,25 @@ library:
   source-dirs: src
 
 executables:
-  x-vs-o-exe:
+  x-vs-o-server:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         app/server
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - x-vs-o
+
+  x-vs-o-client:
+    main:                Main.hs
+    source-dirs:         app/client
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - x-vs-o
 
 tests:
   x-vs-o-test:
