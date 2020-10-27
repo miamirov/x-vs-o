@@ -85,7 +85,8 @@ state2result (HasWinner winner) player
 
 class Player player where
   makeMove
-    :: value
+    :: Int
+    -> value
     -> Board value
     -> State player Position
 

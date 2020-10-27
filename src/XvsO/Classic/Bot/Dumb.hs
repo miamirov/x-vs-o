@@ -13,8 +13,8 @@ import XvsO.Classic.Game
 newtype DumbBot = DumbBot { dbReplayCount :: Int }
 
 instance Player DumbBot where
-  makeMove :: value -> Board value -> State DumbBot Position
-  makeMove _ wBoard =
+  makeMove :: Int -> value -> Board value -> State DumbBot Position
+  makeMove _ _ wBoard =
     return . fromJust . getFirst . mconcat $ checkPosition <$> positions
     where
       positions :: [Position]
