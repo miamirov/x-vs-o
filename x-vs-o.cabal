@@ -25,13 +25,16 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      XvsO.Classic.Bot.Dumb
+      XvsO.Classic.Game
+      XvsO.Model
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , mtl
   default-language: Haskell2010
 
 executable x-vs-o-exe
@@ -43,18 +46,27 @@ executable x-vs-o-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
     , x-vs-o
   default-language: Haskell2010
 
 test-suite x-vs-o-test
   type: exitcode-stdio-1.0
-  main-is: Spec.hs
+  main-is: Main.hs
   other-modules:
+      XvsO.Classic.Bot.Spec
+      XvsO.Classic.GameTest
+      XvsO.Classic.Spec
+      XvsO.ModelTest
+      XvsO.Spec
       Paths_x_vs_o
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
+    , tasty
+    , tasty-hunit
     , x-vs-o
   default-language: Haskell2010

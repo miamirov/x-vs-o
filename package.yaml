@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/miam
 
 dependencies:
 - base >= 4.7 && < 5
+- mtl
 
 library:
   source-dirs: src
@@ -38,7 +39,7 @@ executables:
 
 tests:
   x-vs-o-test:
-    main:                Spec.hs
+    main:                Main.hs
     source-dirs:         test
     ghc-options:
     - -threaded
@@ -46,3 +47,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - x-vs-o
+    - tasty
+    - tasty-hunit
