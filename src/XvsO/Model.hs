@@ -74,7 +74,7 @@ instance (Show value) => Show (Board value) where
             let prefix = replicate halfNeeded ' '
             let suffix = replicate (halfNeeded + (needed `mod` 2)) ' '
             prefix ++ s ++ suffix
-      
+
       makeSeparator :: Int -> Int -> String -> String -> String -> Char -> String
       makeSeparator cellsCount cellLength prefix cellSeparator suffix blank =
         prefix ++
@@ -138,6 +138,6 @@ class Player player where
   startReplay
     :: State player Bool
 
-  result
+  handleResult
     :: GameResult
     -> State player ()

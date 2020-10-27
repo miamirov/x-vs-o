@@ -15,7 +15,7 @@ import Test.Tasty.HUnit    (Assertion, testCase, (@?=), assertFailure)
 import XvsO.Classic.Game
 import XvsO.Utils
 
-import XvsO.Classic.ScriptPlayer
+import XvsO.Classic.Bot.ScriptBot
 
 testGame :: TestTree
 testGame = testGroup "Test Game module"
@@ -67,7 +67,7 @@ testDoStep :: TestTree
 testDoStep = testGroup "`doStep` function"
   [ testCase "Do correct step" $
       testSteps
-        (ScriptPlayer [(1, 1)])
+        (ScriptBot [(1, 1)])
         emptyScriptPlayer
         Step
         ClassicGameT
@@ -78,8 +78,8 @@ testDoStep = testGroup "`doStep` function"
           }
   , testCase "Do incorrect step" $
       testSteps
-        (ScriptPlayer [(1, 1)])
-        (ScriptPlayer [(1, 1), (1, 1), (1, 1), (0, 0)])
+        (ScriptBot [(1, 1)])
+        (ScriptBot [(1, 1), (1, 1), (1, 1), (0, 0)])
         Step
         ClassicGameT
           { gPlayerX = emptyScriptPlayer
@@ -90,8 +90,8 @@ testDoStep = testGroup "`doStep` function"
           }
   , testCase "Win X" $
       testSteps
-        (ScriptPlayer [(0, 0), (0, 1), (0, 2)])
-        (ScriptPlayer [(1, 0), (1, 1)])
+        (ScriptBot [(0, 0), (0, 1), (0, 2)])
+        (ScriptBot [(1, 0), (1, 1)])
         (HasWinner X)
         ClassicGameT
           { gPlayerX = emptyScriptPlayer
@@ -105,8 +105,8 @@ testDoStep = testGroup "`doStep` function"
           }
   , testCase "Win O" $
       testSteps
-        (ScriptPlayer [(0, 0), (0, 1), (2, 0)])
-        (ScriptPlayer [(1, 0), (1, 1), (1, 2)])
+        (ScriptBot [(0, 0), (0, 1), (2, 0)])
+        (ScriptBot [(1, 0), (1, 1), (1, 2)])
         (HasWinner O)
         ClassicGameT
           { gPlayerX = emptyScriptPlayer
@@ -120,8 +120,8 @@ testDoStep = testGroup "`doStep` function"
           }
   , testCase "Mirror" $
       testSteps
-        (ScriptPlayer [(0, 1), (0, 2), (1, 0), (1, 1), (2, 2)])
-        (ScriptPlayer [(0, 0), (1, 2), (2, 0), (2, 1)])
+        (ScriptBot [(0, 1), (0, 2), (1, 0), (1, 1), (2, 2)])
+        (ScriptBot [(0, 0), (1, 2), (2, 0), (2, 1)])
         BoardEnd
         ClassicGameT
           { gPlayerX = emptyScriptPlayer
@@ -136,10 +136,10 @@ testDoStep = testGroup "`doStep` function"
   ]
   where
     testSteps
-      :: ScriptPlayer
-      -> ScriptPlayer
+      :: ScriptBot
+      -> ScriptBot
       -> ClassicGameState
-      -> ClassicGameT ScriptPlayer ScriptPlayer
+      -> ClassicGameT ScriptBot ScriptBot
       -> Assertion
     testSteps
       playerX
@@ -151,7 +151,7 @@ testDoStep = testGroup "`doStep` function"
         let initialGame = initClassicGame playerX playerO
         (gameState, ClassicGame (game :: ClassicGameT tPlayerX tPlayerO))
           <- safeRunState (doStep_ $ gStep expectedGame) initialGame
-        case (eqT @tPlayerX @ScriptPlayer, eqT @tPlayerO @ScriptPlayer) of
+        case (eqT @tPlayerX @ScriptBot, eqT @tPlayerO @ScriptBot) of
           (Just Refl, Just Refl) -> do
             gameState @?= expectedResult
             game @?= expectedGame

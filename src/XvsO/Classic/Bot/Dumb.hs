@@ -33,11 +33,11 @@ instance Player DumbBot where
   startReplay :: State DumbBot Bool
   startReplay = do
     DumbBot replayCount <- get
-    if replayCount <= 0 
+    if replayCount <= 0
     then return False
     else do
       put $ DumbBot (pred replayCount)
       return True
 
-  result :: GameResult -> State DumbBot ()
-  result _ = return ()
+  handleResult :: GameResult -> State DumbBot ()
+  handleResult _ = return ()

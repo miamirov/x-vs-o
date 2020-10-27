@@ -55,9 +55,12 @@ test-suite x-vs-o-test
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      XvsO.Classic.Bot.BotCommonTest
+      XvsO.Classic.Bot.BotPlay
+      XvsO.Classic.Bot.DumbTest
+      XvsO.Classic.Bot.ScriptBot
       XvsO.Classic.Bot.Spec
       XvsO.Classic.GameTest
-      XvsO.Classic.ScriptPlayer
       XvsO.Classic.Spec
       XvsO.ModelTest
       XvsO.Spec
