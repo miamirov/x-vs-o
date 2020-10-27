@@ -28,6 +28,7 @@ library
       XvsO.Classic.Bot.Dumb
       XvsO.Classic.Game
       XvsO.Model
+      XvsO.Utils
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:

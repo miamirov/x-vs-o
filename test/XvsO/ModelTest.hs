@@ -18,7 +18,7 @@ testModel = testGroup "Test Model module"
 testIsEmptyCell :: TestTree
 testIsEmptyCell = testGroup "`isEmptyCell` function"
   [ testCase "Empty cell" $ isEmptyCell cell_ @?= True
-  , testCase "Non-empty cell" $ isEmptyCell (cell ()) @?= False 
+  , testCase "Non-empty cell" $ isEmptyCell (cell ()) @?= False
   ]
 
 testEmptyBoard :: TestTree

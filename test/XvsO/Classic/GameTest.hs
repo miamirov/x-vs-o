@@ -13,6 +13,7 @@ import Test.Tasty          (TestTree, testGroup)
 import Test.Tasty.HUnit    (Assertion, testCase, (@?=), assertFailure)
 
 import XvsO.Classic.Game
+import XvsO.Utils
 
 import XvsO.Classic.ScriptPlayer
 
@@ -32,7 +33,7 @@ testCheckBoard = testGroup "`checkBoard` function"
   where
     winBoards :: XorO -> [ClassicBoard]
     winBoards value =
-      foldr ($) emptyClassicBoard . (flip setCell_ (cell value) <$>) <$> winMasks
+      foldr ($) emptyClassicBoard <$> (flip setCell_ (cell value) <$$> winMasks)
       where
         winMasks :: [[(Int, Int)]]
         winMasks =
@@ -49,14 +50,14 @@ testCheckBoard = testGroup "`checkBoard` function"
           ]
 
     mirrorSituation :: ClassicBoard
-    mirrorSituation = Board $ (cell <$>) <$>
+    mirrorSituation = Board $ cell <$$>
       [ [O, X, X]
       , [X, X, O]
       , [O, O, X]
       ]
     
     winOnLastStep :: ClassicBoard
-    winOnLastStep = Board $ (cell <$>) <$>
+    winOnLastStep = Board $ cell <$$>
       [ [X, O, X]
       , [X, X, O]
       , [O, O, X]
@@ -126,7 +127,7 @@ testDoStep = testGroup "`doStep` function"
           { gPlayerX = emptyScriptPlayer
           , gPlayerO = emptyScriptPlayer
           , gStep    = 9
-          , gBoard   = Board $ (cell <$>) <$>
+          , gBoard   = Board $ cell <$$>
               [ [O, X, X]
               , [X, X, O]
               , [O, O, X]

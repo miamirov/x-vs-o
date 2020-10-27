@@ -24,6 +24,7 @@ import Control.Monad.State (State, get, runState, put)
 import Data.Typeable (Typeable)
 
 import XvsO.Model
+import XvsO.Utils
 
 data XorO = X | O
   deriving (Eq, Show)
@@ -43,11 +44,11 @@ checkBoard wBoard@(Board board)
   | otherwise  = Step
   where
     noPlace :: Bool
-    noPlace = not . or $ or . (isEmptyCell <$>) <$> board
+    noPlace = not . or $ or <$> (isEmptyCell <$$> board)
     
     checkWin :: XorO -> Bool
     checkWin value =
-      or $ and . ((cell value ==) . flip getCell wBoard <$>) <$> winMasks
+      or $ and <$> ((cell value ==) . flip getCell wBoard <$$> winMasks)
       where
         winMasks :: [[Position]]
         winMasks =
