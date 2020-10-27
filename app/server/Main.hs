@@ -2,5 +2,7 @@ module Main
   ( main
   ) where
 
+import XvsO.Web.Server (runServer)
+
 main :: IO ()
-main = putStrLn "Hello from server!"
+main = runServer 8080

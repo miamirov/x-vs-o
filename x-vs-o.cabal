@@ -28,7 +28,10 @@ library
       XvsO.Classic.Bot.Dumb
       XvsO.Classic.Game
       XvsO.Model
+      XvsO.TUI.Client
       XvsO.Utils
+      XvsO.Web.Client
+      XvsO.Web.Server
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:
