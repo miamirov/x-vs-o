@@ -1,5 +1,7 @@
 module XvsO.TUI.Client
   ( getPosition
+  , askReplay
+  , showResult
   ) where
 
 import Data.List (intercalate)
@@ -83,6 +85,13 @@ printBoard (tRow, tColumn) (Board board) = do
       then setAt position '^' str
       else setAt position '^' $ setAt (position + 1) '^' str
 
+getKey :: IO [Char]
+getKey = reverse <$> getKey_ ""
+  where getKey_ chars = do
+          char <- getChar
+          more <- hReady stdin
+          (if more then getKey_ else return) (char:chars)
+
 getPosition :: Show value => Int -> value -> Board value -> IO Position
 getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
   where
@@ -103,13 +112,6 @@ getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
         "\n"     -> return                       position
         _        -> getPosition_                 position
     
-    getKey :: IO [Char]
-    getKey = reverse <$> getKey_ ""
-      where getKey_ chars = do
-              char <- getChar
-              more <- hReady stdin
-              (if more then getKey_ else return) (char:chars)
-    
     positionUp :: Position -> Position
     positionUp (row, column) =
       (if row == 0 then 0 else pred row, column)
@@ -125,3 +127,39 @@ getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
     positionRight :: Position -> Position
     positionRight (row, column) =
       (row, if succ column == length (board !! row) then column else succ column)
+
+askReplay :: IO Bool
+askReplay = askReplay_ True
+  where
+    askReplay_ :: Bool -> IO Bool
+    askReplay_ choose = do
+      hSetBuffering stdin NoBuffering
+      hSetEcho stdin False
+      putStrLn      "Do you whant repeat game?"
+      putStrLn      "    YES      NO"
+      if choose
+      then putStrLn "    ^^^"
+      else putStrLn "             ^^"
+      hFlush stdout
+      key <- getKey
+      case key of
+        "\ESC[C" -> askReplay_ False
+        "\ESC[D" -> askReplay_ True
+        "\n"     -> return     choose
+        "y"      -> return     True
+        "n"      -> return     False
+        _        -> askReplay_ choose
+
+showResult :: GameResult -> IO ()
+showResult result = do
+  putStrLn $
+    case result of
+      Win    -> "Congrutilations!"
+      Loose  -> "You could try again!"
+      Mirror -> "No winner, no looser!"
+  hFlush stdout
+  hSetBuffering stdin NoBuffering
+  hSetEcho stdin False
+  _ <- getKey
+  return ()
+  
