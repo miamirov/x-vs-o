@@ -6,8 +6,6 @@ module XvsO.Classic.Bot.ScriptBot
   , emptyScriptPlayer
   ) where
 
-import Control.Monad.State (State, put, get)
-
 import XvsO.Model
 
 newtype ScriptBot = ScriptBot { spData :: [Position] }
@@ -18,25 +16,22 @@ instance Player ScriptBot where
     :: Int
     -> value
     -> Board value
-    -> State ScriptBot Position
-  makeMove step _ _ = do
-    ScriptBot data_ <- get
+    -> ScriptBot
+    -> IO (ScriptBot, Position)
+  makeMove step _ _ (ScriptBot data_) = do
     case data_ of
-      [] -> error $ "Step isn't exists: " ++ show step
-      position:tailData -> do
-         put $ ScriptBot tailData
-         return position
+      []                -> ioError . userError $ "Step isn't exists: " ++ show step
+      position:tailData -> return (ScriptBot tailData, position)
 
-  startReplay
-    :: State ScriptBot Bool
-  startReplay = do
-    ScriptBot data_ <- get
-    return $ not $ null data_
+  startReplay :: ScriptBot -> IO (ScriptBot, Bool)
+  startReplay bot@(ScriptBot data_) =
+    return (bot, not $ null data_)
 
   handleResult
     :: GameResult
-    -> State ScriptBot ()
-  handleResult _ = return ()
+    -> ScriptBot
+    -> IO ScriptBot
+  handleResult _ = return
 
 emptyScriptPlayer :: ScriptBot
 emptyScriptPlayer = ScriptBot mempty

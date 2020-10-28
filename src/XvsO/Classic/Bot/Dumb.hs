@@ -4,18 +4,17 @@ module XvsO.Classic.Bot.Dumb
   ( DumbBot(..)
   ) where
 
-import Data.Maybe          (fromJust)
-import Data.Monoid         (First(..))
-import Control.Monad.State (State, get, put)
+import Data.Maybe  (fromJust)
+import Data.Monoid (First(..))
 
 import XvsO.Classic.Game
 
 newtype DumbBot = DumbBot { dbReplayCount :: Int }
 
 instance Player DumbBot where
-  makeMove :: Int -> value -> Board value -> State DumbBot Position
-  makeMove _ _ wBoard =
-    return . fromJust . getFirst . mconcat $ checkPosition <$> positions
+  makeMove :: Int -> value -> Board value -> DumbBot -> IO (DumbBot, Position)
+  makeMove _ _ wBoard bot =
+    return (bot, fromJust . getFirst . mconcat $ checkPosition <$> positions)
     where
       positions :: [Position]
       positions =
@@ -30,14 +29,11 @@ instance Player DumbBot where
           Nothing -> Just position
           Just _  -> Nothing
 
-  startReplay :: State DumbBot Bool
-  startReplay = do
-    DumbBot replayCount <- get
+  startReplay :: DumbBot -> IO (DumbBot, Bool)
+  startReplay bot@(DumbBot replayCount) = do
     if replayCount <= 0
-    then return False
-    else do
-      put $ DumbBot (pred replayCount)
-      return True
+    then return (bot, False)
+    else return (DumbBot $ pred replayCount, True)
 
-  handleResult :: GameResult -> State DumbBot ()
-  handleResult _ = return ()
+  handleResult :: GameResult -> DumbBot -> IO DumbBot
+  handleResult _ = return

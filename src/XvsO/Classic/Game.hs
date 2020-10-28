@@ -20,7 +20,6 @@ module XvsO.Classic.Game
   , doStep
   ) where
 
-import Control.Monad.State (State, get, runState, put)
 import Data.Typeable (Typeable)
 
 import XvsO.Model
@@ -89,9 +88,8 @@ initClassicGame player1 player2 =
     , gBoard   = emptyClassicBoard
     }
 
-doStep :: State ClassicGame ClassicGameState
-doStep = do
-  ClassicGame game <- get
+doStep :: ClassicGame -> IO (ClassicGame, ClassicGameState)
+doStep (ClassicGame game) = do
   if even $ gStep game
   then doStep_ (gPlayerX game) X $
          \p (ClassicGame b) -> ClassicGame $ b { gPlayerX = p }
@@ -103,14 +101,13 @@ doStep = do
       => player
       -> XorO
       -> (player -> ClassicGame -> ClassicGame)
-      -> State ClassicGame ClassicGameState
+      -> IO (ClassicGame, ClassicGameState)
     doStep_ player value updater = do
-      ClassicGame game <- get
-      let (position, updPlayer) =
-            runState (makeMove (gStep game) value (gBoard game)) player
+      (updPlayer, position)
+        <- makeMove (gStep game) value (gBoard game) player
       case setCell isEmptyCell position (cell value) (gBoard game) of
         Nothing       -> doStep_ updPlayer value updater
         Just updBoard -> do
-          put . updater updPlayer . ClassicGame $ 
-            game { gStep = succ $ gStep game, gBoard = updBoard }
-          return $ checkBoard updBoard
+          let rGame = updater updPlayer $ ClassicGame $ 
+                game { gStep = succ $ gStep game, gBoard = updBoard }
+          return (rGame, checkBoard updBoard)

@@ -6,8 +6,6 @@ module XvsO.Classic.GameTest
   ( testGame
   ) where
 
-import Control.Exception   (catch, SomeException)
-import Control.Monad.State (State, runState)
 import Data.Typeable       (eqT, (:~:)(Refl))
 import Test.Tasty          (TestTree, testGroup)
 import Test.Tasty.HUnit    (Assertion, testCase, (@?=), assertFailure)
@@ -149,22 +147,14 @@ testDoStep = testGroup "`doStep` function"
         =
       do
         let initialGame = initClassicGame playerX playerO
-        (gameState, ClassicGame (game :: ClassicGameT tPlayerX tPlayerO))
-          <- safeRunState (doStep_ $ gStep expectedGame) initialGame
+        (ClassicGame (game :: ClassicGameT tPlayerX tPlayerO), gameState)
+          <- doStep_ (gStep expectedGame) initialGame
         case (eqT @tPlayerX @ScriptBot, eqT @tPlayerO @ScriptBot) of
           (Just Refl, Just Refl) -> do
             gameState @?= expectedResult
             game @?= expectedGame
           _ -> assertFailure "Player change type!"
     
-    safeRunState
-      :: State ClassicGame ClassicGameState
-      -> ClassicGame
-      -> IO (ClassicGameState, ClassicGame)
-    safeRunState state game =
-      catch (return $ runState state game) $ \msg ->
-        assertFailure $ show (msg::SomeException)
-    
-    doStep_ :: Int -> State ClassicGame ClassicGameState
-    doStep_ 1 = doStep
-    doStep_ i = doStep >> doStep_ (pred i)
+    doStep_ :: Int -> ClassicGame -> IO (ClassicGame, ClassicGameState)
+    doStep_ 1 game = doStep game
+    doStep_ i game = doStep game >>= doStep_ (pred i) . fst

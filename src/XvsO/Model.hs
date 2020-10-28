@@ -24,11 +24,8 @@ module XvsO.Model
   ) where
 
 import Data.Maybe (isNothing, fromJust)
-import Control.Monad.State (State)
 
 import XvsO.Utils
-import Data.List (intercalate)
-import Data.Functor ((<&>))
 
 newtype Cell value = Cell { unCell :: Maybe value }
   deriving (Eq)
@@ -93,11 +90,14 @@ class Player player where
     :: Int
     -> value
     -> Board value
-    -> State player Position
+    -> player
+    -> IO (player, Position)
 
   startReplay
-    :: State player Bool
+    :: player
+    -> IO (player, Bool)
 
   handleResult
     :: GameResult
-    -> State player ()
+    -> player
+    -> IO player

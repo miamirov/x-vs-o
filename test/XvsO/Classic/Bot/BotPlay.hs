@@ -4,7 +4,6 @@ module XvsO.Classic.Bot.BotPlay
   ( runGame
   ) where
 
-import Control.Monad.State (State, evalState, get)
 import Data.Typeable       (Typeable)
 import Test.Tasty.HUnit    (Assertion, (@?))
 
@@ -15,11 +14,9 @@ runGame
   => botX -> botO -> Assertion
 runGame botX botY = do
   let initialGame = initClassicGame botX botY
-  evalState runGame_ initialGame @? "Too long game"
+  runGame_ initialGame >>= (@? "Too long game")
   where
-    runGame_ :: State ClassicGame Bool
-    runGame_ = doStep >>= \case
-      Step -> runGame_
-      _    -> do
-        ClassicGame game <- get
-        return $ gStep game <= 9
+    runGame_ :: ClassicGame -> IO Bool
+    runGame_ game = doStep game >>= \case
+      (updGame, Step)        -> runGame_ updGame
+      (ClassicGame rGame, _) -> return $ gStep rGame <= 9
