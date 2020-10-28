@@ -6,9 +6,14 @@ module XvsO.TUI.Client
 
 import Data.List (intercalate)
 import System.IO (stdout, hFlush, stdin, hReady, BufferMode(NoBuffering), hSetBuffering, hSetEcho)
+import System.Process (system)
+import Control.Monad (void)
 
 import XvsO.Model
 import XvsO.Utils
+
+clear :: IO ()
+clear = void (system "clear")
 
 printBoard :: (Show value) => Position -> Board value -> IO ()
 printBoard (tRow, tColumn) (Board board) = do
@@ -27,7 +32,7 @@ printBoard (tRow, tColumn) (Board board) = do
     printLines cellLength rows = do
       printTop (length $ head rows) cellLength
       printLines_ 0 cellLength rows
-    
+
     printLines_ :: Int -> Int -> [[String]] -> IO ()
     printLines_ _ _ [] = return ()
     printLines_ currentRow cellLength (row:rows) = do
@@ -40,36 +45,36 @@ printBoard (tRow, tColumn) (Board board) = do
       then printBottom       (length row) cellLength
       else printRowSeparator (length row) cellLength
       printLines_       (succ currentRow) cellLength rows
-    
-    
+
+
     rowsSeparator :: String -> String -> String -> Char -> Int -> Int -> String
     rowsSeparator prefix cellSeparator suffix blank cellsCount cellLength =
       prefix ++
       intercalate cellSeparator (replicate cellsCount $ replicate cellLength blank) ++
       suffix
-    
+
     printTop :: Int -> Int -> IO ()
     printTop = putStrLn ... rowsSeparator "┏" "┳" "┓" '━'
-    
+
     printBottom :: Int -> Int -> IO ()
     printBottom = putStrLn ... rowsSeparator "┗" "┻" "┛" '━'
-    
+
     printRowSeparator :: Int -> Int -> IO ()
     printRowSeparator = putStrLn ... rowsSeparator "┣" "╋" "┫" '━'
-    
+
     printBlanks :: Int -> Int -> IO ()
     printBlanks = putStrLn ... rowsSeparator "┃" "┃" "┃" ' '
-    
+
     printBlanks_ :: Int -> Int -> IO ()
     printBlanks_ cellsCount cellLength =
       putStrLn $
         setCursor cellLength $
           rowsSeparator "┃" "┃" "┃" ' ' cellsCount cellLength
-    
+
     printRow :: [String] -> Int -> IO ()
     printRow row cellLength =
       putStrLn $ "┃" ++ intercalate "┃" (addSpaces cellLength <$> row) ++ "┃"
-    
+
     addSpaces :: Int -> String -> String
     addSpaces l s = do
           let needed = l - length s
@@ -77,7 +82,7 @@ printBoard (tRow, tColumn) (Board board) = do
           let prefix = replicate halfNeeded ' '
           let suffix = replicate (halfNeeded + (needed `mod` 2)) ' '
           prefix ++ s ++ suffix
-    
+
     setCursor :: Int -> String -> String
     setCursor cellLength str = do
       let position = tColumn * (cellLength + 1) + cellLength `div` 2
@@ -97,6 +102,7 @@ getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
   where
     getPosition_ :: Position -> IO Position
     getPosition_ position = do
+      clear
       hSetBuffering stdin NoBuffering
       hSetEcho stdin False
       putStrLn $ "Step: " ++ show (succ step)
@@ -111,15 +117,15 @@ getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
         "\ESC[D" -> getPosition_ $ positionLeft  position
         "\n"     -> return                       position
         _        -> getPosition_                 position
-    
+
     positionUp :: Position -> Position
     positionUp (row, column) =
       (if row == 0 then 0 else pred row, column)
-    
+
     positionDown :: Position -> Position
     positionDown (row, column) =
       (if succ row == length board then row else succ row, column)
-    
+
     positionLeft :: Position -> Position
     positionLeft (row, column) =
       (row, if column == 0 then 0 else pred column)
@@ -133,13 +139,14 @@ askReplay = askReplay_ True
   where
     askReplay_ :: Bool -> IO Bool
     askReplay_ choose = do
-      hSetBuffering stdin NoBuffering
-      hSetEcho stdin False
+      clear
       putStrLn      "Do you whant repeat game?"
       putStrLn      "    YES      NO"
       if choose
       then putStrLn "    ^^^"
       else putStrLn "             ^^"
+      hSetBuffering stdin NoBuffering
+      hSetEcho stdin False
       hFlush stdout
       key <- getKey
       case key of
@@ -152,6 +159,7 @@ askReplay = askReplay_ True
 
 showResult :: GameResult -> IO ()
 showResult result = do
+  clear
   putStrLn $
     case result of
       Win    -> "Congrutilations!"
@@ -162,4 +170,3 @@ showResult result = do
   hSetEcho stdin False
   _ <- getKey
   return ()
-  

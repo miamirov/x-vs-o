@@ -39,6 +39,7 @@ library
   build-depends:
       base >=4.7 && <5
     , mtl
+    , process
   default-language: Haskell2010
 
 executable x-vs-o-client
@@ -51,6 +52,7 @@ executable x-vs-o-client
   build-depends:
       base >=4.7 && <5
     , mtl
+    , process
     , x-vs-o
   default-language: Haskell2010
 
@@ -64,6 +66,7 @@ executable x-vs-o-server
   build-depends:
       base >=4.7 && <5
     , mtl
+    , process
     , x-vs-o
   default-language: Haskell2010
 
@@ -87,6 +90,7 @@ test-suite x-vs-o-test
   build-depends:
       base >=4.7 && <5
     , mtl
+    , process
     , tasty
     , tasty-hunit
     , x-vs-o
