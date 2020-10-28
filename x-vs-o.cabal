@@ -25,21 +25,40 @@ source-repository head
 
 library
   exposed-modules:
+      Servant.WebSockets.API
+      Servant.WebSockets.Client
+      Servant.WebSockets.Server
       XvsO.Classic.Bot.Dumb
       XvsO.Classic.Game
       XvsO.Model
       XvsO.TUI.Client
       XvsO.Utils
+      XvsO.Web.Api
       XvsO.Web.Client
+      XvsO.Web.Client.RealPlayer
       XvsO.Web.Server
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , exceptions
+    , http-client
     , mtl
+    , network
     , process
+    , resourcet
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
+    , wai-websockets
+    , warp
+    , websockets
   default-language: Haskell2010
 
 executable x-vs-o-client
@@ -50,9 +69,23 @@ executable x-vs-o-client
       app/client
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , exceptions
+    , http-client
     , mtl
+    , network
     , process
+    , resourcet
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
+    , wai-websockets
+    , warp
+    , websockets
     , x-vs-o
   default-language: Haskell2010
 
@@ -64,9 +97,23 @@ executable x-vs-o-server
       app/server
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , exceptions
+    , http-client
     , mtl
+    , network
     , process
+    , resourcet
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
+    , wai-websockets
+    , warp
+    , websockets
     , x-vs-o
   default-language: Haskell2010
 
@@ -88,10 +135,24 @@ test-suite x-vs-o-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , exceptions
+    , http-client
     , mtl
+    , network
     , process
+    , resourcet
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
     , tasty
     , tasty-hunit
+    , wai-websockets
+    , warp
+    , websockets
     , x-vs-o
   default-language: Haskell2010

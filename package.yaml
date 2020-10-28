@@ -23,6 +23,20 @@ dependencies:
 - base >= 4.7 && < 5
 - mtl
 - process
+- aeson
+- servant
+- servant-client
+- servant-client-core
+- servant-server
+- warp
+- http-client
+- binary
+- network
+- bytestring
+- websockets
+- exceptions
+- resourcet
+- wai-websockets
 
 library:
   source-dirs: src
