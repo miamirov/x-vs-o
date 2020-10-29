@@ -1,13 +1,13 @@
 module XvsO.TUI.Client
-  ( getPosition
-  , askReplay
+  ( askReplay
+  , getPosition
   , showResult
   ) where
 
-import Data.List (intercalate)
-import System.IO (stdout, hFlush, stdin, hReady, BufferMode(NoBuffering), hSetBuffering, hSetEcho)
+import Data.List      (intercalate)
+import System.IO      (stdout, hFlush, stdin, hReady, BufferMode(NoBuffering), hSetBuffering, hSetEcho)
 import System.Process (system)
-import Control.Monad (void)
+import Control.Monad  (void)
 
 import XvsO.Model
 import XvsO.Utils
@@ -15,6 +15,7 @@ import XvsO.Utils
 clear :: IO ()
 clear = void (system "clear")
 
+-- | Print board on console
 printBoard :: (Show value) => Position -> Board value -> IO ()
 printBoard (tRow, tColumn) (Board board) = do
   let strBoard = show <$$> board
@@ -85,11 +86,12 @@ printBoard (tRow, tColumn) (Board board) = do
 
     setCursor :: Int -> String -> String
     setCursor cellLength str = do
-      let position = tColumn * (cellLength + 1) + cellLength `div` 2
+      let position = 1 + tColumn * (cellLength + 1) + (cellLength - 1) `div` 2
       if odd cellLength
       then setAt position '^' str
       else setAt position '^' $ setAt (position + 1) '^' str
 
+-- | Return name of pushed key
 getKey :: IO [Char]
 getKey = reverse <$> getKey_ ""
   where getKey_ chars = do
@@ -97,6 +99,7 @@ getKey = reverse <$> getKey_ ""
           more <- hReady stdin
           (if more then getKey_ else return) (char:chars)
 
+-- | Run interactive choose of cell to set mark
 getPosition :: Show value => Int -> value -> Board value -> IO Position
 getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
   where
@@ -134,12 +137,12 @@ getPosition step value wBoard@(Board board) = getPosition_ (0, 0)
     positionRight (row, column) =
       (row, if succ column == length (board !! row) then column else succ column)
 
+-- | Ask player to start replay
 askReplay :: IO Bool
 askReplay = askReplay_ True
   where
     askReplay_ :: Bool -> IO Bool
     askReplay_ choose = do
-      clear
       putStrLn      "Do you whant repeat game?"
       putStrLn      "    YES      NO"
       if choose
@@ -149,6 +152,7 @@ askReplay = askReplay_ True
       hSetEcho stdin False
       hFlush stdout
       key <- getKey
+      clear
       case key of
         "\ESC[C" -> askReplay_ False
         "\ESC[D" -> askReplay_ True
@@ -157,6 +161,7 @@ askReplay = askReplay_ True
         "n"      -> return     False
         _        -> askReplay_ choose
 
+-- | Show result to player
 showResult :: GameResult -> IO ()
 showResult result = do
   clear
@@ -169,4 +174,4 @@ showResult result = do
   hSetBuffering stdin NoBuffering
   hSetEcho stdin False
   _ <- getKey
-  return ()
+  clear

@@ -1,6 +1,5 @@
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module XvsO.Classic.Game
   ( module XvsO.Model
@@ -12,7 +11,7 @@ module XvsO.Classic.Game
   , emptyClassicBoard
 
   , checkBoard
-  
+
   , ClassicGame(..)
   , ClassicGameT(..)
 
@@ -21,20 +20,30 @@ module XvsO.Classic.Game
   ) where
 
 import Data.Typeable (Typeable)
+import GHC.Generics  (Generic)
+import Data.Aeson    (ToJSON, FromJSON)
 
 import XvsO.Model
 import XvsO.Utils
 
+-- | Cell mark of classic game
 data XorO = X | O
-  deriving (Eq, Show)
+  deriving (Eq, Show, Generic)
 
+instance ToJSON XorO
+instance FromJSON XorO
+
+-- | Type of board with classic marks
 type ClassicBoard = Board XorO
 
+-- | Create board of classic size
 emptyClassicBoard :: ClassicBoard
 emptyClassicBoard = emptyBoard 3 3
 
+-- | Game state of classic mark
 type ClassicGameState = GameState XorO
 
+-- | Check classic board on win.
 checkBoard :: ClassicBoard -> ClassicGameState
 checkBoard wBoard@(Board board)
   | checkWin X = HasWinner X
@@ -63,20 +72,23 @@ checkBoard wBoard@(Board board)
           , [ (0, 2), (1, 1), (2, 0) ]
           ]
 
+-- | Classic game state
 data ClassicGameT playerX playerO = ClassicGameT
-  { gPlayerX :: playerX
-  , gPlayerO :: playerO
-  , gStep    :: Int
-  , gBoard   :: ClassicBoard
+  { gPlayerX :: playerX       -- ^ Player of X
+  , gPlayerO :: playerO       -- ^ Player of O
+  , gStep    :: Int           -- ^ Current step
+  , gBoard   :: ClassicBoard  -- ^ Actual board
   }
   deriving (Eq, Show)
 
+-- | Wrapper of classic game state to hide players types
 data ClassicGame where
   ClassicGame
     :: (Player playerX, Player playerO, Typeable playerX, Typeable playerO)
     => ClassicGameT playerX playerO
     -> ClassicGame
 
+-- | Create initial state of classic game
 initClassicGame
   :: (Player playerX, Player playerO, Typeable playerX, Typeable playerO)
   => playerX -> playerO -> ClassicGame
@@ -88,6 +100,7 @@ initClassicGame player1 player2 =
     , gBoard   = emptyClassicBoard
     }
 
+-- | Do one step of classic game
 doStep :: ClassicGame -> IO (ClassicGame, ClassicGameState)
 doStep (ClassicGame game) = do
   if even $ gStep game
@@ -108,6 +121,6 @@ doStep (ClassicGame game) = do
       case setCell isEmptyCell position (cell value) (gBoard game) of
         Nothing       -> doStep_ updPlayer value updater
         Just updBoard -> do
-          let rGame = updater updPlayer $ ClassicGame $ 
+          let rGame = updater updPlayer $ ClassicGame $
                 game { gStep = succ $ gStep game, gBoard = updBoard }
           return (rGame, checkBoard updBoard)

@@ -37,30 +37,21 @@ dependencies:
 - exceptions
 - resourcet
 - wai-websockets
+- text
 
 library:
   source-dirs: src
 
 executables:
-  x-vs-o-server:
+  x-vs-o-run:
     main:                Main.hs
-    source-dirs:         app/server
+    source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - x-vs-o
-
-  x-vs-o-client:
-    main:                Main.hs
-    source-dirs:         app/client
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
-    dependencies:
-      - x-vs-o
 
 tests:
   x-vs-o-test:

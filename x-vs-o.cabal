@@ -37,6 +37,7 @@ library
       XvsO.Web.Client
       XvsO.Web.Client.RealPlayer
       XvsO.Web.Server
+      XvsO.Web.Server.ReceivePlayer
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:
@@ -56,17 +57,18 @@ library
     , servant-client
     , servant-client-core
     , servant-server
+    , text
     , wai-websockets
     , warp
     , websockets
   default-language: Haskell2010
 
-executable x-vs-o-client
+executable x-vs-o-run
   main-is: Main.hs
   other-modules:
       Paths_x_vs_o
   hs-source-dirs:
-      app/client
+      app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -83,34 +85,7 @@ executable x-vs-o-client
     , servant-client
     , servant-client-core
     , servant-server
-    , wai-websockets
-    , warp
-    , websockets
-    , x-vs-o
-  default-language: Haskell2010
-
-executable x-vs-o-server
-  main-is: Main.hs
-  other-modules:
-      Paths_x_vs_o
-  hs-source-dirs:
-      app/server
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      aeson
-    , base >=4.7 && <5
-    , binary
-    , bytestring
-    , exceptions
-    , http-client
-    , mtl
-    , network
-    , process
-    , resourcet
-    , servant
-    , servant-client
-    , servant-client-core
-    , servant-server
+    , text
     , wai-websockets
     , warp
     , websockets
@@ -125,11 +100,13 @@ test-suite x-vs-o-test
       XvsO.Classic.Bot.BotPlay
       XvsO.Classic.Bot.DumbTest
       XvsO.Classic.Bot.ScriptBot
+      XvsO.Classic.Bot.SlowPlayer
       XvsO.Classic.Bot.Spec
       XvsO.Classic.GameTest
       XvsO.Classic.Spec
       XvsO.ModelTest
       XvsO.Spec
+      XvsO.Web
       Paths_x_vs_o
   hs-source-dirs:
       test
@@ -151,6 +128,7 @@ test-suite x-vs-o-test
     , servant-server
     , tasty
     , tasty-hunit
+    , text
     , wai-websockets
     , warp
     , websockets
