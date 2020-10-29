@@ -65,3 +65,6 @@ tests:
     - x-vs-o
     - tasty
     - tasty-hunit
+    - tasty-hspec
+    - hspec
+    - async

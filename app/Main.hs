@@ -5,7 +5,7 @@ module Main
   ( main
   ) where
 
-import XvsO.Web.Api (clientApp)
+import XvsO.Web.Client (clientApp)
 import XvsO.Web.Server (runServer)
 import System.Environment (getArgs)
 

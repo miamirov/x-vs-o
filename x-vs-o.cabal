@@ -113,10 +113,12 @@ test-suite x-vs-o-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , async
     , base >=4.7 && <5
     , binary
     , bytestring
     , exceptions
+    , hspec
     , http-client
     , mtl
     , network
@@ -127,6 +129,7 @@ test-suite x-vs-o-test
     , servant-client-core
     , servant-server
     , tasty
+    , tasty-hspec
     , tasty-hunit
     , text
     , wai-websockets
